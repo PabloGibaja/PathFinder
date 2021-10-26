@@ -1,5 +1,6 @@
 import pygame
 from queue import PriorityQueue
+from random import randint
 
 WIDTH = 800
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
@@ -189,6 +190,21 @@ def get_clicked_pos(pos, rows, width):
     return row, col
 
 
+def make_maze(rows, width):
+    grid = []
+    gap = width // rows
+    for i in range(rows):
+        grid.append([])
+        for j in range(rows):
+            spot = Spot(i, j, gap, rows)
+            maze_position = randint(0,10)
+            if maze_position % 3 == 0:
+                spot.make_barrier()
+            grid[i].append(spot)
+
+    return grid
+
+
 def main(win, width):
     ROWS = 50
     grid = make_grid(ROWS, width)
@@ -235,11 +251,17 @@ def main(win, width):
                             spot.update_neighbors(grid)
 
                     algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)
+                    start.make_start()
 
                 if event.key == pygame.K_c:
                     start = None
                     end = None
                     grid = make_grid(ROWS, width)
+
+                if event.key == pygame.K_m:
+                    start = None
+                    end = None
+                    grid = make_maze(ROWS, width)
 
     pygame.quit()
 
